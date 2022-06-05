@@ -26,8 +26,8 @@ This project took me one weekend to finish at a slow pace. I have incorporated t
 
 ```
 sudo apt-get install sox espeak
-git clone THIS_REPO
-cd THIS_REPO
+git clone https://github.com/RickCarlino/gemini-protocol-audio-reader.git
+cd https://github.com/RickCarlino/gemini-protocol-audio-reader.git
 npm install
 ```
 
