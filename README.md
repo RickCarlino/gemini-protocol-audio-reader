@@ -4,7 +4,7 @@ An audio-only [Gemini Protocol](https://en.wikipedia.org/wiki/Gemini_(protocol))
 
 # What Does It Sound Like?
 
-The file [gemini.mp3](./gemini.mp3) has a pre-recorded sample of output from gemini://gemini.circumlunar.space/
+The file [gemini.mp3](https://github.com/RickCarlino/gemini-protocol-audio-reader/raw/main/gemini.mp3) has a pre-recorded sample of output from gemini://gemini.circumlunar.space/
 
 # Features
 
