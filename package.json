@@ -1,6 +1,8 @@
 {
   "dependencies": {
-    "@types/node": "^17.0.39",
     "gemini-fetch": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.9"
   }
 }

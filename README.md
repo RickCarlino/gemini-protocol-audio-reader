@@ -39,8 +39,6 @@ Assuming you want to visit `gemini://gemini.circumlunar.space/`
 npx ts-node app.ts gemini://gemini.circumlunar.space/
 ```
 
-**DO NOT FORGET THE `/` AT THE END OF THE URL!**
-
 # Configuration
 
 There are a number of ENV vars available to configure the application:
@@ -54,6 +52,8 @@ There are a number of ENV vars available to configure the application:
  * Make this an NPM package so people can use it via `npx`
  * Ability to export pages as MP3 to read stuff later.
  * Interactive mode so that the user can follow links / browse.
+ * Ability to use Google Cloud TTS instead of `espeak`
+ * Ability to use the library in a non-CLI context.
 
 # Comments Welcome
 
