@@ -9,7 +9,7 @@ export type Renderer<T> = {
   quote(content: string): T;
 };
 
-enum GemText {
+export enum GemText {
   Text = 1,
   Link = 2,
   Preformatted = 3,
@@ -46,33 +46,39 @@ class ParseResult {
             return generator.quote(v.content);
         }
       })
-      .join("");
+      .join(EMPTY);
   }
 }
 
+const WHITESPACE = " \t\r\n\v\b";
+const FENCE = "```";
+const CR = "\n";
+const EMPTY = "";
+const HEADING = "#";
+
 // TODO: Refactor this code to be more readable, but only after
 // there is a test suite.
-export function parse(source: string, strict: boolean = false): ParseResult {
+export function parse(source: string): ParseResult {
   let res: ParseResultData[] = [];
   let preformatting: boolean = false;
-  let preformattingAlt: string = "";
+  let preformattingAlt: string = EMPTY;
   let preformattingBuffer: string[] = [];
   let listStarted: boolean = false;
   let listBuffer: string[] = [];
   source
-    .replace(/\r\n/g, "\n")
-    .split("\n")
+    .replace(/\r\n/g, CR)
+    .split(CR)
     .forEach((v) => {
       if (preformatting) {
-        if (v.trim() === "```") {
+        if (v.trim() === FENCE) {
           res.push({
-            _: 3,
+            _: GemText.Preformatted,
             content: preformattingBuffer,
             alt: preformattingAlt,
           });
           preformatting = false;
           preformattingBuffer = [];
-          preformattingAlt = "";
+          preformattingAlt = EMPTY;
           return;
         } else {
           preformattingBuffer.push(v);
@@ -80,41 +86,30 @@ export function parse(source: string, strict: boolean = false): ParseResult {
         }
       }
       if (listStarted && !v.startsWith("* ")) {
-        res.push({ _: 5, content: listBuffer });
+        res.push({ _: GemText.List, content: listBuffer });
         listStarted = false;
         listBuffer = [];
       }
 
-      if ((strict && v.startsWith("=> ")) || (!strict && v.startsWith("=>"))) {
+      if (v.startsWith("=>")) {
         let x = v.substring(2).trim();
         let i = 0;
-        while (i < x.length && !" \t\r\n\v\b".includes(x[i])) {
+        while (i < x.length && !WHITESPACE.includes(x[i])) {
           i++;
         }
         let url = x.substring(0, i);
         x = x.substring(i).trim();
-        res.push({ _: 2, url, alt: x });
-      } else if (
-        (strict && v.startsWith("> ")) ||
-        (!strict && v.startsWith(">"))
-      ) {
-        res.push({ _: 6, content: v.substring(1).trim() });
-      } else if (v.startsWith("#")) {
+        res.push({ _: GemText.Link, url, alt: x });
+      } else if (v.startsWith(">")) {
+        res.push({ _: GemText.Quote, content: v.substring(1).trim() });
+      } else if (v.startsWith(HEADING)) {
         let i = 0;
-        while (v[i] == "#") {
+        while (v[i] == HEADING) {
           i++;
         }
         let level = i;
-        if (strict) {
-          if (" \t\r\n\v\b".includes(v[i])) {
-            res.push({ _: 4, level, text: v.substring(i).trim() });
-          } else {
-            res.push({ _: 1, val: v });
-          }
-        } else {
-          res.push({ _: 4, level, text: v.substring(i).trim() });
-        }
-      } else if (v.startsWith("```")) {
+        res.push({ _: GemText.Heading, level, text: v.substring(i).trim() });
+      } else if (v.startsWith(FENCE)) {
         preformattingAlt = v.substring(3).trim();
         preformatting = true;
       } else if (v.startsWith("* ")) {
@@ -124,14 +119,18 @@ export function parse(source: string, strict: boolean = false): ParseResult {
         }
         listBuffer.push(v.substring(2).trim());
       } else {
-        res.push({ _: 1, val: v });
+        res.push({ _: GemText.Text, val: v });
       }
     });
   if (preformattingBuffer.length > 0) {
-    res.push({ _: 3, content: preformattingBuffer, alt: preformattingAlt });
+    res.push({
+      _: GemText.Preformatted,
+      content: preformattingBuffer,
+      alt: preformattingAlt,
+    });
   }
   if (listBuffer.length > 0) {
-    res.push({ _: 5, content: listBuffer });
+    res.push({ _: GemText.List, content: listBuffer });
   }
   return new ParseResult(res);
 }

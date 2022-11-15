@@ -54,6 +54,9 @@ There are a number of ENV vars available to configure the application:
  * Interactive mode so that the user can follow links / browse.
  * Ability to use Google Cloud TTS instead of `espeak`
  * Ability to use the library in a non-CLI context.
+ * Ensure the client can pass a "torture test" https://gemini.circumlunar.space/
+ * Ability to handle user input (so that people can use search pages and stuff)
+ * Really wish I could speak links and headings in a different voice than text.
 
 # Comments Welcome
 

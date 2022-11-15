@@ -17,5 +17,5 @@ if (!rawURL) {
 const url = sanitizeGeminiURL(rawURL);
 
 const gemText = execSync(`npx gemini-fetch ${url}`, { encoding: 'utf-8' });
-const ast = parse(gemText, true);
+const ast = parse(gemText);
 ast.generate(SpeechRenderer)
